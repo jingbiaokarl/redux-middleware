@@ -20,17 +20,27 @@ let reducer = (state = 0, action) => {
     dispatch(action);
     console.log('after', store.getState());
 }*/
-let thunk = store => dispatch => action =>{
+/*let thunk = store => dispatch => action =>{
    if(typeof action == 'function')
        return action(dispatch);
    dispatch(action);
+}*/
+let isPromise = (obj)=> obj.then;
+let promise =  store => dispatch => action =>{
+    return isPromise(action)?action.then(dispatch):dispatch(action);
 }
-let store = applyMiddleware(thunk)(createStore)(reducer);
+let store = applyMiddleware(promise)(createStore)(reducer);
 store.subscribe(() => {
     console.log(store.getState());
 })
+/*
 store.dispatch((dispatch)=>{
     setTimeout(function(){
         dispatch({type: 'add'});
     },2000)
-});
+});*/
+store.dispatch(new Promise(function(resolve,reject){
+    setTimeout(function(){
+        resolve({type:'add'});
+    },2000)
+}));
