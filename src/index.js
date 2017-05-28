@@ -15,21 +15,26 @@ let reducer = (state = 0, action) => {
         return state;
     }
 }
-/*let logger = store => dispatch => action => {
-    console.log('before', store.getState());
-    dispatch(action);
-    console.log('after', store.getState());
-}*/
+let logger1 = store => next => action => {
+    console.log('before1', store.getState());
+    next(action);
+    console.log('after1', store.getState());
+}
+let logger2 = store => next => action => {
+    console.log('before2', store.getState());
+    next(action);
+    console.log('after2', store.getState());
+}
 /*let thunk = store => dispatch => action =>{
    if(typeof action == 'function')
        return action(dispatch);
    dispatch(action);
 }*/
-let isPromise = (obj)=> obj.then;
+/*let isPromise = (obj)=> obj.then;
 let promise =  store => dispatch => action =>{
     return isPromise(action)?action.then(dispatch):dispatch(action);
-}
-let store = applyMiddleware(promise)(createStore)(reducer);
+}*/
+let store = applyMiddleware(logger2,logger1)(createStore)(reducer);
 store.subscribe(() => {
     console.log(store.getState());
 })
@@ -39,8 +44,10 @@ store.dispatch((dispatch)=>{
         dispatch({type: 'add'});
     },2000)
 });*/
+/*
 store.dispatch(new Promise(function(resolve,reject){
     setTimeout(function(){
         resolve({type:'add'});
     },2000)
-}));
+}));*/
+store.dispatch({type:'add'});

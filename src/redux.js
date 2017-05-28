@@ -21,11 +21,15 @@ const createStore = (reducer) => {
     return {getState, dispatch, subscribe};
 };
 
-let applyMiddleware = middleware => createStore => reducer => {
+let applyMiddleware = (...middlewares) => createStore => reducer => {
         let store = createStore(reducer);
-        middleware = middleware(store);
-        let dispatch = middleware(store.dispatch);
+        middlewares = middlewares.map(middleware=>middleware(store));
+        let dispatch = compose(...middlewares)(store.dispatch);
         return {...store, dispatch}
+}
+
+function compose(...funcs) {
+    return args => funcs.reduceRight((composed, f) => f(composed), args);
 }
 
 export {createStore, applyMiddleware}
