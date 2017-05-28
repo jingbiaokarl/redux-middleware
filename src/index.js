@@ -15,13 +15,22 @@ let reducer = (state = 0, action) => {
         return state;
     }
 }
-let logger = store => dispatch => action => {
+/*let logger = store => dispatch => action => {
     console.log('before', store.getState());
     dispatch(action);
     console.log('after', store.getState());
+}*/
+let thunk = store => dispatch => action =>{
+   if(typeof action == 'function')
+       return action(dispatch);
+   dispatch(action);
 }
-let store = applyMiddleware(logger)(createStore)(reducer);
+let store = applyMiddleware(thunk)(createStore)(reducer);
 store.subscribe(() => {
     console.log(store.getState());
 })
-store.dispatch({type: 'add'});
+store.dispatch((dispatch)=>{
+    setTimeout(function(){
+        dispatch({type: 'add'});
+    },2000)
+});

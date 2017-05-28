@@ -21,7 +21,7 @@ const createStore = (reducer) => {
     return {getState, dispatch, subscribe};
 };
 
-let applyMiddleware = (middleware) => (createStore) => (reducer) => {
+let applyMiddleware = middleware => createStore => reducer => {
         let store = createStore(reducer);
         middleware = middleware(store);
         let dispatch = middleware(store.dispatch);
