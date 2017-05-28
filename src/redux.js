@@ -18,7 +18,14 @@ const createStore = (reducer) => {
 
     dispatch({});
 
-    return { getState, dispatch, subscribe };
+    return {getState, dispatch, subscribe};
 };
 
-export {createStore}
+let applyMiddleware = (middleware) => (createStore) => (reducer) => {
+        let store = createStore(reducer);
+        middleware = middleware(store);
+        let dispatch = middleware(store.dispatch);
+        return {...store, dispatch}
+}
+
+export {createStore, applyMiddleware}

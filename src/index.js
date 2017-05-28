@@ -1,22 +1,27 @@
 import React from 'react';
-import {createStore} from './redux';
+import {createStore, applyMiddleware} from './redux';
 
-let reducer = (state=0,action)=>{
-    if(action){
-        switch(action.type){
+let reducer = (state = 0, action) => {
+    if (action) {
+        switch (action.type) {
             case 'add':
-                return state +1;
+                return state + 1;
             case 'sub':
-                return state -1;
+                return state - 1;
             default:
                 return state;
         }
-    }else{
+    } else {
         return state;
     }
 }
-let store = createStore(reducer);
-store.subscribe(()=>{
-    alert(store.getState());
+let logger = store => dispatch => action => {
+    console.log('before', store.getState());
+    dispatch(action);
+    console.log('after', store.getState());
+}
+let store = applyMiddleware(logger)(createStore)(reducer);
+store.subscribe(() => {
+    console.log(store.getState());
 })
-store.dispatch({type:'add'});
+store.dispatch({type: 'add'});
